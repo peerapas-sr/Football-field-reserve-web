@@ -21,16 +21,16 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-_(h(klka7d_f^a$p(luv%ur=g5c5l%6zi*ob&q0+^1_g@vj%5g'
+SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-ALLOWED_HOSTS = ['*']
+DEBUG = os.environ.get('DEBUG', 'False') == 'True'
+ALLOWED_HOSTS = ['tasoccer888.up.railway.app']
 
 CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1:5500",
     "http://localhost:5500",
-    '*',
+    'tasoccer888.up.railway.app',
 ]
 
 CORS_ALLOW_CREDENTIALS = True
@@ -158,3 +158,4 @@ LOGOUT_REDIRECT_URL = '/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = 'Useraccounts.CustomerUsers'
+CSRF_TRUSTED_ORIGINS = ['https://tasoccer888.up.railway.app']
