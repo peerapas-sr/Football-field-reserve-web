@@ -1,0 +1,1 @@
+web: mkdir -p staticfiles && python manage.py collectstatic --noinput && gunicorn TAsoccerWebApp.wsgi
