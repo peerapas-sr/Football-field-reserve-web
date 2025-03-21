@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-idc12$d376iaq-)#@ob+9h04r+ej%r#!!rr-o&9_fe^cmo4166
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-
+PORT = os.environ.get('PORT', '8000')
 ALLOWED_HOSTS = ["*"]
 STATIC_URL = 'static/'
 
