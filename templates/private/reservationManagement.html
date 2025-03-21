@@ -1,0 +1,554 @@
+{% extends 'private/base.html' %}
+{% block content %}
+{% csrf_token %}
+<input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+<main class="flex-1 p-6 bg-gray-100">
+    <div class="max-w-6xl mx-auto bg-white p-6 shadow-md rounded-md">
+        <!-- 📅 Calendar -->
+        <input type="date" id="filterDate" class="border p-2 rounded-md w-full text-center mb-4" placeholder="Select a Date" onchange="filterReservations()">
+    </div>
+
+    <!-- for all reservation -->
+    <div class="max-w-6xl mx-auto bg-white p-6 shadow-md rounded-md mt-3">
+        <h2 class="text-2xl font-semibold mb-2">All Reservations</h2>
+        <!-- 🔹 Tables for Different Field Sizes -->
+        <div id="reservationTables" style="max-height: 400px;overflow-y: auto;">
+            <!-- must be fix to match the field size later na now got value from LoginView.py-->
+            <div class="mb-6">
+                
+                <!-- table for all -->
+                <table class="w-full border border-gray-300">
+                    <thead class="border" style="position: sticky;top: 0;z-index: 2">
+                        <tr class="bg-gray-200 border" style="border: 1px solid black;">
+                            <!-- <th class="border p-2">ID</th> -->
+                            <th class="border p-2 text-xl" style="padding: 10px;">ID</th>
+                            <th class="border p-2 text-xl" style="padding: 10px;">Customer name</th>
+                            <th class="border p-2 text-xl" style="padding: 10px;">Field</th>
+                            <th class="border p-2 text-xl" style="padding: 10px;">Reservation date</th>
+                            <th class="border p-2 text-xl" style="padding: 10px;">Start</th>
+                            <th class="border p-2 text-xl" style="padding: 10px;">End</th>
+                            <th class="border p-2 text-xl" style="padding: 10px;">Status</th>
+                            <th class="border p-2 text-xl" style="padding: 10px;">Total Price</th>
+                            <th class="border p-2 text-xl" style="padding: 10px;">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="all-reservations">
+                        {% for reservation in reservation %}
+                        <tr>
+                            <td class="border p-2 text-xl">{{reservation.id}}</td>
+                            <td class="border p-2 text-xl">{{reservation.customer_name}}</td> 
+                            <td class="border p-2 text-xl">{{reservation.field}}</td>
+                            <td class="border p-2 text-xl">{{reservation.reservation_date}}</td>
+                            <td class="border p-2 text-xl">{{reservation.start_time}}</td>
+                            <td class="border p-2 text-xl">{{reservation.end_time}}</td> 
+                            <td class="border p-2 text-xl">
+                                <span
+                                id="status-{{reservation.id}}" 
+                                style="color: 
+                                {% if reservation.status == 'cancelled' %}red
+                                {% elif reservation.status == 'booked' %}green
+                                {% else %}darkgoldenrod
+                                {% endif %};">
+                                {{reservation.status}}</span>
+                                <select id="edit-status-{{ reservation.id }}" class="hidden border rounded" style="cursor: pointer;">
+                                    <option value="pending" {% if reservation.status == 'pending' %}selected{% endif %}>pending</option>
+                                    <option value="booked" {% if reservation.status == 'booked' %}selected{% endif %}>booked</option>
+                                    <option value="cancelled" {% if reservation.status == 'cancelled' %}selected{% endif %}>cancelled</option>
+                                </select>    
+                            </td>
+                            <td class="border p-2 text-xl">{{reservation.total_price}}</td>
+                            <td class="border p-2 text-xl" style="text-align: center;">
+                                {% if reservation.status != 'pending' %}
+                                <button onclick="editRow({{ reservation.id }})" id="editStatus-btn-{{ reservation.id }}" class="px-2 rounded" style="background-color: #8B8000; cursor: pointer;">Edit</button>
+                                <button onclick="saveRow({{ reservation.id }})" id="saveStatus-btn-{{ reservation.id }}" class="px-2 rounded hidden" style="background-color: green; cursor: pointer;">Save</button>
+                                {% else %}
+                                <div class="flex">
+
+                                
+                                    <button onclick="confirmRow({{ reservation.id }})" id="confirm-btn-{{ reservation.id }}" class="px-2 rounded" style="background-color: green; cursor: pointer;">Confirm</button>
+                                    <button onclick="cancelRow({{ reservation.id }})" id="cancel-btn-{{ reservation.id }}" class="px-2 rounded" style="background-color: red; cursor: pointer;">Cancel</button>
+                                </div>
+                                {% endif %}
+                            </td>
+                            
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    
+    <!-- for big reservation -->
+    <div class="max-w-6xl mx-auto bg-white p-6 shadow-md rounded-md mt-3">
+        <h2 class="text-2xl font-semibold mb-2">Big field Reservations</h2>
+        <!-- 🔹 Tables for Different Field Sizes -->
+        <div id="reservationTables" style="max-height: 400px;overflow-y: auto;">
+            <!-- must be fix to match the field size later na now got value from LoginView.py-->
+            <div class="mb-6">
+                
+                <!-- table for big -->
+                <table class="w-full border border-gray-300">
+                    <thead class="border" style="position: sticky;top: 0;z-index: 2">
+                        <tr class="bg-gray-200 border" style="border: 1px solid black;">
+                            <!-- <th class="border p-2">ID</th> -->
+                            <th class="border p-2 text-xl" style="padding: 10px;">ID</th>
+                            <th class="border p-2 text-xl" style="padding: 10px;">Customer name</th>
+                            <th class="border p-2 text-xl" style="padding: 10px;">Field</th>
+                            <th class="border p-2 text-xl" style="padding: 10px;">Reservation date</th>
+                            <th class="border p-2 text-xl" style="padding: 10px;">Start</th>
+                            <th class="border p-2 text-xl" style="padding: 10px;">End</th>
+                            <th class="border p-2 text-xl" style="padding: 10px;">Status</th>
+                            <th class="border p-2 text-xl" style="padding: 10px;">Total Price</th>
+                            <th class="border p-2 text-xl" style="padding: 10px;">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="big-reservation">
+                        <!-- ข้อมูลจะถูกเพิ่มโดย JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- for medium reservaion -->
+    <div class="max-w-6xl mx-auto bg-white p-6 shadow-md rounded-md mt-3">
+        <h2 class="text-2xl font-semibold mb-2">Medium field Reservations</h2>
+        <!-- 🔹 Tables for Different Field Sizes -->
+        <div id="reservationTables" style="max-height: 400px;overflow-y: auto;">
+            <!-- must be fix to match the field size later na now got value from LoginView.py-->
+            <div class="mb-6">
+                
+                <!-- table for medium -->
+                <table class="w-full border border-gray-300">
+                    <thead class="border" style="position: sticky;top: 0;z-index: 2">
+                        <tr class="bg-gray-200 border" style="border: 1px solid black;">
+                            <!-- <th class="border p-2">ID</th> -->
+                            <th class="border p-2 text-xl" style="padding: 10px;">ID</th>
+                            <th class="border p-2 text-xl" style="padding: 10px;">Customer name</th>
+                            <th class="border p-2 text-xl" style="padding: 10px;">Field</th>
+                            <th class="border p-2 text-xl" style="padding: 10px;">Reservation date</th>
+                            <th class="border p-2 text-xl" style="padding: 10px;">Start</th>
+                            <th class="border p-2 text-xl" style="padding: 10px;">End</th>
+                            <th class="border p-2 text-xl" style="padding: 10px;">Status</th>
+                            <th class="border p-2 text-xl" style="padding: 10px;">Total Price</th>
+                            <th class="border p-2 text-xl" style="padding: 10px;">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="medium-reservation">
+                        <!-- ข้อมูลจะถูกเพิ่มโดย JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- for small reservation -->
+    <div class="max-w-6xl mx-auto bg-white p-6 shadow-md rounded-md mt-3">
+        <h2 class="text-2xl font-semibold mb-2">Small field Reservations</h2>
+        <!-- 🔹 Tables for Different Field Sizes -->
+        <div id="reservationTables" style="max-height: 400px;overflow-y: auto;">
+            <!-- must be fix to match the field size later na now got value from LoginView.py-->
+            <div class="mb-6">
+                
+                <!-- table for small -->
+                <table class="w-full border border-gray-300">
+                    <thead class="border" style="position: sticky;top: 0;z-index: 2">
+                        <tr class="bg-gray-200 border" style="border: 1px solid black;">
+                            <!-- <th class="border p-2">ID</th> -->
+                            <th class="border p-2 text-xl" style="padding: 10px;">ID</th>
+                            <th class="border p-2 text-xl" style="padding: 10px;">Customer name</th>
+                            <th class="border p-2 text-xl" style="padding: 10px;">Field</th>
+                            <th class="border p-2 text-xl" style="padding: 10px;">Reservation date</th>
+                            <th class="border p-2 text-xl" style="padding: 10px;">Start</th>
+                            <th class="border p-2 text-xl" style="padding: 10px;">End</th>
+                            <th class="border p-2 text-xl" style="padding: 10px;">Status</th>
+                            <th class="border p-2 text-xl" style="padding: 10px;">Total Price</th>
+                            <th class="border p-2 text-xl" style="padding: 10px;">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="small-reservation">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</main>
+{% endblock %}
+{% block extra_js %}
+<script>
+    function editRow(reservationId) {
+        // Hide text spans and show input fields
+        document.getElementById(`status-${reservationId}`).classList.add("hidden");
+        document.getElementById(`edit-status-${reservationId}`).classList.remove("hidden");
+
+        // Change button states
+        document.getElementById(`editStatus-btn-${reservationId}`).classList.add("hidden");
+        document.getElementById(`saveStatus-btn-${reservationId}`).classList.remove("hidden");
+    }
+
+    function saveRow(reservationId) {
+    // ตรวจสอบ CSRF token
+    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]');
+    if (!csrfToken) {
+        console.error('CSRF token not found');
+        alert('ไม่พบ CSRF token กรุณารีเฟรชหน้าเว็บ');
+        return;
+    }
+
+    // ตรวจสอบ input status
+    const statusInput = document.getElementById(`edit-status-${reservationId}`);
+    if (!statusInput) {
+        console.error('Status input not found');
+        alert('เกิดข้อผิดพลาดในการดึงข้อมูล');
+        return;
+    }
+
+    // ดึงสถานะที่เลือก และแปลงเป็นตัวพิมพ์เล็กทั้งหมด
+    const newStatus = statusInput.value.toLowerCase();
+    
+    console.log('Updating reservation status:', {
+        reservationId,
+        newStatus,
+        csrfToken: csrfToken.value
+    });
+
+    // ส่งข้อมูลไปยัง backend
+    fetch(`/api/reservations/${reservationId}/update-status/`, {
+        method: 'PATCH',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrfToken.value
+        },
+        body: JSON.stringify({
+            status: newStatus
+        })
+    })
+    .then(response => {
+        if (!response.ok) {
+            // ลองดูข้อความผิดพลาดที่เซิร์ฟเวอร์ส่งกลับมา
+            return response.text().then(text => {
+                console.error('Server response:', text);
+                try {
+                    return JSON.parse(text);
+                } catch (e) {
+                    throw new Error(`Server error: ${text}`);
+                }
+            });
+        }
+        return response.json();
+    })
+    .then(data => {
+        console.log('Update response:', data);
+        
+        if (data.status === 'success') {
+            // อัปเดต UI
+            const statusElement = document.getElementById(`status-${reservationId}`);
+            if (statusElement) {
+                statusElement.textContent = newStatus;
+                
+                // เปลี่ยนสีตามสถานะ
+                statusElement.style.color = 
+                    newStatus === 'cancelled' ? 'red' : 
+                    newStatus === 'booked' ? 'green' : 
+                    'darkgoldenrod';
+            }
+
+            // ซ่อนช่องเลือกสถานะ
+            if (statusInput) statusInput.classList.add('hidden');
+            
+            // แสดงข้อความปกติ
+            if (statusElement) statusElement.classList.remove('hidden');
+
+            // ปิดโหมดแก้ไข
+            const editStatusBtn = document.getElementById(`editStatus-btn-${reservationId}`);
+            const saveStatusBtn = document.getElementById(`saveStatus-btn-${reservationId}`);
+            
+            if (editStatusBtn) editStatusBtn.classList.remove('hidden');
+            if (saveStatusBtn) saveStatusBtn.classList.add('hidden');
+
+            alert('อัปเดตสถานะสำเร็จ');
+        } else {
+            throw new Error(data.message || 'เกิดข้อผิดพลาด');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert(error.message || 'เกิดข้อผิดพลาดในการอัปเดตสถานะ');
+    });
+}
+
+    function confirmRow(reservationId) {
+        // ตรวจสอบสถานะการล็อกอิน
+        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value || 
+                        (document.cookie.match('(^|;)\\s*csrftoken\\s*=\\s*([^;]+)')?.pop() || '');
+
+        fetch(`/api/reservations/${reservationId}/confirm/`, {
+            method: 'PATCH',
+            credentials: 'include', // เพิ่ม credentials
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken
+            }
+        })
+        .then(response => {
+            // บันทึก response status และ text เพื่อดีบั๊ก
+            console.log('Response status:', response.status);
+            return response.text().then(text => {
+                try {
+                    return JSON.parse(text);
+                } catch (e) {
+                    console.error('Invalid JSON:', text);
+                    throw new Error('Invalid JSON response');
+                }
+            });
+        })
+        .then(data => {
+            if (data.status === 'success') {
+                const statusElement = document.getElementById(`status-${reservationId}`);
+                if (statusElement) {
+                    statusElement.textContent = 'booked';
+                    statusElement.style.color = 'green';
+                }
+                
+                const confirmBtn = document.getElementById(`confirm-btn-${reservationId}`);
+                const cancelBtn = document.getElementById(`cancel-btn-${reservationId}`);
+                
+                if (confirmBtn) confirmBtn.style.display = 'none';
+                if (cancelBtn) cancelBtn.style.display = 'none';
+                
+                alert('ยืนยันการจองสำเร็จ');
+            } else {
+                throw new Error(data.message || 'เกิดข้อผิดพลาด');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert(error.message || 'เกิดข้อผิดพลาดในการยืนยันการจอง');
+        });
+    }
+
+    function cancelRow(reservationId) {
+        // ตรวจสอบสถานะการล็อกอิน
+        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value || 
+                        (document.cookie.match('(^|;)\\s*csrftoken\\s*=\\s*([^;]+)')?.pop() || '');
+
+        fetch(`/api/reservations/${reservationId}/cancel/`, {
+            method: 'PATCH',
+            credentials: 'include', // เพิ่ม credentials
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken
+            }
+        })
+        .then(response => {
+            // บันทึก response status และ text เพื่อดีบั๊ก
+            console.log('Response status:', response.status);
+            return response.text().then(text => {
+                try {
+                    return JSON.parse(text);
+                } catch (e) {
+                    console.error('Invalid JSON:', text);
+                    throw new Error('Invalid JSON response');
+                }
+            });
+        })
+        .then(data => {
+            if (data.status === 'success') {
+                const statusElement = document.getElementById(`status-${reservationId}`);
+                if (statusElement) {
+                    statusElement.textContent = 'cancelled';
+                    statusElement.style.color = 'red';
+                }
+                
+                const confirmBtn = document.getElementById(`confirm-btn-${reservationId}`);
+                const cancelBtn = document.getElementById(`cancel-btn-${reservationId}`);
+                
+                if (confirmBtn) confirmBtn.style.display = 'none';
+                if (cancelBtn) cancelBtn.style.display = 'none';
+                
+                alert('ยกเลิกการจองสำเร็จ');
+            } else {
+                throw new Error(data.message || 'เกิดข้อผิดพลาด');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert(error.message || 'เกิดข้อผิดพลาดในการยกเลิกการจอง');
+        });
+    }
+
+    function filterReservations() {
+        const filterDate = document.getElementById('filterDate').value;
+        // ทำการกรองข้อมูลตามวันที่ที่เลือก
+        // โค้ดสำหรับการกรองข้อมูลตามวันที่
+        alert('คุณเลือกวันที่: ' + filterDate);
+        // ในอนาคตควรเพิ่มการกรองข้อมูลจริงๆ โดยใช้ AJAX หรือ fetch API
+    }
+
+    // เพิ่มไว้ในไฟล์ reservationManagement.html ในส่วน script
+
+// ฟังก์ชันกรองข้อมูลตามประเภทสนาม
+function loadFieldReservations(fieldId, selectedDate = null) {
+    // ตรวจสอบ CSRF token
+    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value || 
+                        (document.cookie.match('(^|;)\\s*csrftoken\\s*=\\s*([^;]+)')?.pop() || '');
+
+    // สร้าง URL พร้อมพารามิเตอร์
+    let apiUrl = `/api/reservations/?field=${fieldId}`;
+    if (selectedDate) {
+        apiUrl += `&date=${selectedDate}`;
+    }
+    
+    console.log(`Loading reservations for field ${fieldId}, URL: ${apiUrl}`);
+
+    fetch(apiUrl, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrfToken
+        }
+    })
+    .then(response => {
+        console.log(`Response status for field ${fieldId}:`, response.status);
+        
+        if (!response.ok) {
+            return response.text().then(text => {
+                console.error(`Error response for field ${fieldId}:`, text);
+                throw new Error(`Server returned ${response.status}: ${text}`);
+            });
+        }
+        return response.json();
+    })
+    .then(data => {
+        console.log(`Data received for field ${fieldId}:`, data);
+        
+        // ดึง element ที่จะแสดงข้อมูล
+        let tableBodyId;
+        if (parseInt(fieldId) === 1) {
+            tableBodyId = 'big-reservation';
+        } else if (parseInt(fieldId) === 2) {
+            tableBodyId = 'medium-reservation';
+        } else if (parseInt(fieldId) === 3) {
+            tableBodyId = 'small-reservation';
+        }
+        
+        const tableBody = document.getElementById(tableBodyId);
+        
+        if (!tableBody) {
+            console.error(`Table body element not found: #${tableBodyId}`);
+            return;
+        }
+        
+        // ล้างข้อมูลเดิม
+        tableBody.innerHTML = '';
+        
+        // แสดงข้อมูลใหม่
+        if (data && data.length > 0) {
+            data.forEach(reservation => {
+                const statusColor = 
+                    reservation.status === 'cancelled' ? 'red' : 
+                    reservation.status === 'booked' ? 'green' : 
+                    'darkgoldenrod';
+                
+                const row = `
+                    <tr>
+                        <td class="border p-2 text-xl">${reservation.id}</td>
+                        <td class="border p-2 text-xl">${reservation.customer_name}</td> 
+                        <td class="border p-2 text-xl">${reservation.field_name}</td>
+                        <td class="border p-2 text-xl">${reservation.reservation_date}</td>
+                        <td class="border p-2 text-xl">${reservation.start_time}</td>
+                        <td class="border p-2 text-xl">${reservation.end_time}</td> 
+                        <td class="border p-2 text-xl">
+                            <span id="status-${reservation.id}" style="color: ${statusColor};">
+                                ${reservation.status}
+                            </span>
+                            <select id="edit-status-${reservation.id}" class="hidden border rounded" style="cursor: pointer;">
+                                <option value="pending" ${reservation.status === 'pending' ? 'selected' : ''}>pending</option>
+                                <option value="booked" ${reservation.status === 'booked' ? 'selected' : ''}>booked</option>
+                                <option value="cancelled" ${reservation.status === 'cancelled' ? 'selected' : ''}>cancelled</option>
+                            </select>    
+                        </td>
+                        <td class="border p-2 text-xl">${reservation.total_price}</td>
+                        <td class="border p-2 text-xl" style="text-align: center;">
+                            ${reservation.status !== 'pending' ? 
+                                `<button onclick="editRow(${reservation.id})" id="editStatus-btn-${reservation.id}" class="px-2 rounded" style="background-color: #8B8000; cursor: pointer;">Edit</button>
+                                <button onclick="saveRow(${reservation.id})" id="saveStatus-btn-${reservation.id}" class="px-2 rounded hidden" style="background-color: green; cursor: pointer;">Save</button>` :
+                                `<div class="flex">
+                                    <button onclick="confirmRow(${reservation.id})" id="confirm-btn-${reservation.id}" class="px-2 rounded" style="background-color: green; cursor: pointer;">Confirm</button>
+                                    <button onclick="cancelRow(${reservation.id})" id="cancel-btn-${reservation.id}" class="px-2 rounded" style="background-color: red; cursor: pointer;">Cancel</button>
+                                </div>`
+                            }
+                        </td>
+                    </tr>
+                `;
+                
+                tableBody.innerHTML += row;
+            });
+        } else {
+            tableBody.innerHTML = `
+                <tr>
+                    <td colspan="9" class="border p-2 text-xl text-center">ไม่พบข้อมูลการจอง</td>
+                </tr>
+            `;
+        }
+    })
+    .catch(error => {
+        console.error(`Error loading data for field ${fieldId}:`, error);
+        
+        // กรณีเกิดข้อผิดพลาด ให้แสดงข้อความในตาราง
+        const tableBodyId = parseInt(fieldId) === 1 ? 'big-reservation' : 
+                          parseInt(fieldId) === 2 ? 'medium-reservation' : 
+                          'small-reservation';
+        
+        const tableBody = document.getElementById(tableBodyId);
+        if (tableBody) {
+            tableBody.innerHTML = `
+                <tr>
+                    <td colspan="9" class="border p-2 text-xl text-center">เกิดข้อผิดพลาดในการโหลดข้อมูล: ${error.message}</td>
+                </tr>
+            `;
+        }
+    });
+}
+
+// เรียกใช้ฟังก์ชันเมื่อโหลดหน้า
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('Document loaded, initializing reservation tables');
+    
+    // ตรวจสอบว่ามี tbody elements ที่ต้องการหรือไม่
+    const bigReservationBody = document.getElementById('big-reservation');
+    const mediumReservationBody = document.getElementById('medium-reservation');
+    const smallReservationBody = document.getElementById('small-reservation');
+    
+    console.log('Found table bodies:', {
+        bigReservationBody: !!bigReservationBody,
+        mediumReservationBody: !!mediumReservationBody,
+        smallReservationBody: !!smallReservationBody
+    });
+    
+    // โหลดข้อมูลแยกตามประเภทสนาม
+    loadFieldReservations(1); // สนามใหญ่
+    loadFieldReservations(2); // สนามกลาง
+    loadFieldReservations(3); // สนามเล็ก
+    
+    // ฟังก์ชันกรองข้อมูลตามวันที่
+    const filterDateInput = document.getElementById('filterDate');
+    if (filterDateInput) {
+        filterDateInput.addEventListener('change', function() {
+            const selectedDate = this.value;
+            console.log('Date selected:', selectedDate);
+            
+            if (selectedDate) {
+                // โหลดข้อมูลใหม่ตามวันที่ที่เลือก
+                loadFieldReservations(1, selectedDate);
+                loadFieldReservations(2, selectedDate);
+                loadFieldReservations(3, selectedDate);
+            }
+        });
+    } else {
+        console.log('Filter date input not found');
+    }
+});
+</script>
+{% endblock %}
