@@ -3,7 +3,7 @@
 2. Activate environment:
     ```
     TASoccerEnv\Scripts\activate
-    ```
+    ````
 
 3. Install requirements:
     ```
