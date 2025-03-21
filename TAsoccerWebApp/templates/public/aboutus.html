@@ -1,0 +1,14 @@
+{% extends 'public/base.html' %}
+{% load static %}
+{% block content %}
+    <!-- About Us Container -->
+    <div class="flex justify-center h-screen bg-cover bg-center" style="background-image: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url({% static 'images/test.jpg' %});">
+        <div class="pt-24 min-h-[calc(100vh-80px)] container mx-auto px-6 py-12 bg-white" style="padding-top: 110px;">
+            <div class="max-w-4xl mx-auto text-center">
+                <h1 class="text-3xl font-bold text-blue-600 mb-4">เกี่ยวกับเรา</h1>
+                <div class="w-full h-full grid grid-cols-1 sm:grid-cols-2 gap-3 mt-5 md:mt-10 bg-black">
+                    <img src="{% static 'images/aboutus.jpg' %}" alt="about-us">
+                </div>
+        </div>
+        
+{% endblock %}
