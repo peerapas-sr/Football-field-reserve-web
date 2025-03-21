@@ -1,1 +1,0 @@
-web: cd TASoccerWeb && gunicorn tasoccer.wsgi --log-file -
