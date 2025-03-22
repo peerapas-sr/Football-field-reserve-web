@@ -3,7 +3,7 @@ let fieldId = null;
 let pricePerHour = 0;
 
 // เพิ่ม base URL สำหรับ API
-const API_BASE_URL = 'http://127.0.0.1:8000';
+const API_BASE_URL = 'https://tasoccer888.up.railway.app';
 
 document.addEventListener('DOMContentLoaded', function() {
     const dateInput = document.getElementById('date');
