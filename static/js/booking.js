@@ -361,7 +361,7 @@ async function submitBooking(e) {
         
         const errorMessage = error.message.includes('ทับซ้อน') 
             ? 'ไม่สามารถจองได้ เนื่องจากช่วงเวลานี้มีการจองแล้ว กรุณาเลือกช่วงเวลาอื่น' 
-            : 'เกิดข้อผิดพลาดในการจอง: ' + error.message;
+            : 'เกิดข้อผิดพลาดในการจอง: TESTTESTES' + error.message;
         
         alert(errorMessage);
     }
