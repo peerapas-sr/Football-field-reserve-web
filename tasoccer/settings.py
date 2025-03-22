@@ -28,11 +28,12 @@ SECRET_KEY = os.environ.get('SECRET_KEY')
 DUBUG =True
 ALLOWED_HOSTS = ['tasoccer888.up.railway.app']
 
-CORS_ALLOWED_ORIGINS = [
-    "http://127.0.0.1:5500",
-    "http://localhost:5500",
-    'tasoccer888.up.railway.app',
-]
+#CORS_ALLOWED_ORIGINS = [
+    #'http://127.0.0.1:5500',
+    #'http://localhost:5500",
+    #'tasoccer888.up.railway.app',
+#]
+CORS_ALLOWED_ALL_ORIGINS =True
 
 CORS_ALLOW_CREDENTIALS = True
 
