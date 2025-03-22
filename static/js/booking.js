@@ -335,7 +335,7 @@ async function submitBooking(e) {
         const failedBookings = results.filter(result => result.status === 'rejected');
         if (failedBookings.length > 0) {
             const errorMessages = failedBookings.map(result => result.reason.message).join('\n');
-            throw new Error(`มีข้อผิดพลาดในการจอง:\n${errorMessages}`);
+            throw new Error(`มีข้อผิดพลาดในการจอง:testestest\n${errorMessages}`);
         }
 
         // ล้างข้อมูลการจอง
