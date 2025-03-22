@@ -24,21 +24,18 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-#DEBUG = os.environ.get('DEBUG', 'False') == 'True'
-DUBUG =True
+DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 ALLOWED_HOSTS = [
     'tasoccer888.up.railway.app',
     '.railway.app',  # This will match any subdomain of railway.app
     '127.0.0.1',     # For local development
     'localhost',     # For local development
 ]
-#CORS_ALLOWED_ORIGINS = [
-    #'http://127.0.0.1:5500',
-    #'http://localhost:5500",
-    #'tasoccer888.up.railway.app',
-#]
-CORS_ALLOWED_ALL_ORIGINS =True
-
+CORS_ALLOWED_ORIGINS = [
+    'http://127.0.0.1:5500',
+    'http://localhost:5500",
+    'tasoccer888.up.railway.app',
+]
 CORS_ALLOW_CREDENTIALS = True
 
 CORS_ALLOW_METHODS = [
