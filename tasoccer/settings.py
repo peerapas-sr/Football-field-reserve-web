@@ -24,7 +24,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.environ.get('DEBUG', 'False') == 'True'
+#DEBUG = os.environ.get('DEBUG', 'False') == 'True'
+DUBUG =True
 ALLOWED_HOSTS = ['tasoccer888.up.railway.app']
 
 CORS_ALLOWED_ORIGINS = [
@@ -42,6 +43,7 @@ CORS_ALLOW_METHODS = [
     'PATCH',
     'POST',
     'PUT',
+    
 ]
 
 CORS_ALLOW_HEADERS = list(default_headers) + [
