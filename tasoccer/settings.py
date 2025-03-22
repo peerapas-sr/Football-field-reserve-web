@@ -31,11 +31,12 @@ ALLOWED_HOSTS = [
     '127.0.0.1',     # For local development
     'localhost',     # For local development
 ]
-CORS_ALLOWED_ORIGINS = [
-    'http://127.0.0.1:5500',
-    'http://localhost:5500",
-    'tasoccer888.up.railway.app',
-]
+#CORS_ALLOWED_ORIGINS = [
+    #'http://127.0.0.1:5500',
+    #'http://localhost:5500",
+    #'tasoccer888.up.railway.app',
+#]
+CORS_ALLOWED_ORIGINS =True
 CORS_ALLOW_CREDENTIALS = True
 
 CORS_ALLOW_METHODS = [
