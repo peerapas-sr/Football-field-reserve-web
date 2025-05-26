@@ -167,5 +167,5 @@ CSRF_TRUSTED_ORIGINS = ['https://tasoccer888.up.railway.app']
 EMAIL_HOST="smtp.gmail.com"
 EMAIL_PORT=465
 EMAIL_USE_SSL=True
-EMAIL_HOST_USER="booksliber@gmail.com"
-EMAIL_HOST_PASSWORD="vesx idbr ddby berz"
+EMAIL_HOST_USER="placeholder@gmail.com"
+EMAIL_HOST_PASSWORD=""
