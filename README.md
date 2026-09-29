@@ -113,6 +113,3 @@ Football-field-reserve-web/
 * **GitHub:** [@peerapas-sr](https://github.com/peerapas-sr)
 * **GitHub:** [@kittpong-so](https://github.com/kittipong-so)
 * **GitHub:** [@dechawat-n](https://github.com/dechawat-n)
-## License
-
-This project is licensed under the [MIT License](LICENSE).
