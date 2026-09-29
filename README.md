@@ -108,20 +108,11 @@ Football-field-reserve-web/
 └── README.md            # Project documentation
 ```
 
-## Screenshots
-
-| Field Search / Home | Slot Schedule |
-| --- | --- |
-| *(Insert Homepage Screenshot)* | *(Insert Calendar/Slot Screenshot)* |
-
-| Reservation Confirmation | Admin Dashboard |
-| --- | --- |
-| *(Insert Booking Form Screenshot)* | *(Insert Dashboard Screenshot)* |
-
 ## Developer
 
 * **GitHub:** [@peerapas-sr](https://github.com/peerapas-sr)
-
+* **GitHub:** [@kittpong-so](https://github.com/kittipong-so)
+* **GitHub:** [@dechawat-n](https://github.com/dechawat-n)
 ## License
 
 This project is licensed under the [MIT License](LICENSE).
